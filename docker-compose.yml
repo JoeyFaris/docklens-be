@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  docklens-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: docklens-backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - trivy-cache:/root/.cache/trivy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    networks:
+      - docklens-network
+
+volumes:
+  trivy-cache:
+    driver: local
+
+networks:
+  docklens-network:
+    driver: bridge 
