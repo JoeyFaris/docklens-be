@@ -4,28 +4,25 @@ const jwt = require('jsonwebtoken');
 const env = require('../config/env');
 
 const UserSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: true,
+    unique: true
+  },
   email: {
     type: String,
-    required: [true, 'Please provide an email'],
-    unique: true,
-    match: [
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-      'Please provide a valid email address'
-    ],
-    lowercase: true,
-    trim: true
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
+    required: true
   },
   name: {
     type: String,
     required: [true, 'Please provide a name'],
     trim: true,
     maxlength: [50, 'Name cannot be more than 50 characters']
-  },
-  password: {
-    type: String,
-    required: [true, 'Please provide a password'],
-    minlength: [8, 'Password must be at least 8 characters long'],
-    select: false // don't return password in queries
   },
   role: {
     type: String,
@@ -64,6 +61,8 @@ const UserSchema = new mongoose.Schema({
   },
   resetPasswordToken: String,
   resetPasswordExpire: Date
+}, {
+  timestamps: true
 });
 
 // Encrypt password using bcrypt before saving
